@@ -14,6 +14,8 @@ from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
 
+from PIM_product import main_chart
+
 app = flask.Flask(__name__)
 
 colors = {
@@ -38,14 +40,9 @@ def polynomial():
     args = flask.request.args
 
     # Get all the form arguments in the url with defaults
-    color = getitem(args, 'color', 'Black')
-    _from = int(getitem(args, '_from', 0))
-    to = int(getitem(args, 'to', 10))
+    product_name = getitem(args, 'color', 'Black')
 
-    # Create a polynomial line graph with those arguments
-    x = list(range(_from, to + 1))
-    fig = figure(title="Polynomial")
-    fig.line(x, [i ** 2 for i in x], color=colors[color], line_width=2)
+    fig = main_chart()
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -57,9 +54,7 @@ def polynomial():
         plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
-        color=color,
-        _from=_from,
-        to=to
+        color=product_name,
     )
     return encode_utf8(html)
 

@@ -47,24 +47,6 @@ def create_line_chart():
 
     return p
 
-# def create_bar_chart(data, title, x_name, y_name, hover_tool=None,
-#                      width=1200, height=300):
-#
-#
-#     fruits = ['Apples', 'Pears', 'Nectarines', 'Plums', 'Grapes', 'Strawberries']
-#     counts = [5, 3, 4, 2, 4, 6]
-#
-#     source = ColumnDataSource(data=dict(fruits=fruits, counts=counts, color=Spectral6))
-#
-#     p = figure(x_range=fruits, plot_height=250, y_range=(0, 9), title="Fruit Counts")
-#     p.vbar(x='fruits', top='counts', width=0.9, color='color', legend="fruits", source=source)
-#
-#     p.xgrid.grid_line_color = None
-#     p.legend.orientation = "horizontal"
-#     p.legend.location = "top_center"
-#
-#     return p
-
 
 if __name__ == "__main__":
     app.run(debug=True)
