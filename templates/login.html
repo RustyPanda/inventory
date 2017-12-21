@@ -1,0 +1,65 @@
+<html>
+  <head>
+    <title>Flask Intro - login page</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  </head>
+  <body>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+    <div class="container">
+
+
+        <!-- Image and text -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="">
+                <img src="https://w7kuoa.dm2302.livefilestore.com/y4mT1moMDTtnafdZPiQVmwbt8j6Mw5nXSWI6cUwctzQbmlElB0wl-WQNOo1zbl4PKGelEWS-asCeyKwvQuyciO42MmXnO2p9x6f8KazP8-YuOgV0767C7TOyEPZKibefXKTqQmfgpwkdcxhMCQJ3k81aspvbDlZA-tUuJ_Rh2JCK-UUDJTmqCTPqjGPCFuTN9lmX1G1CgoniGj5M9OLNnMSIA?width=85&height=65&cropmode=none" width="41" height="30" border='3' class="d-inline-block align-top" alt="">
+                Predictive Inventory Management
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/tracker">Tracker</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" href="/alerts">Alerts</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+
+        <div class="row">
+            <div class="col-3">
+                <h5>Please login</h5>
+                <br>
+                <form action="" method="post">
+                    <input type="text" placeholder="Username" name="username" value="{{
+          request.form.username }}">
+                    <input type="password" placeholder="Password" name="password" value="{{
+          request.form.password }}">
+                    <input class="btn btn-default" type="submit" value="Login">
+                </form>
+                {% if error %}
+                <p class="error"><strong>Error:</strong> {{ error }}
+                    {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+  </body>
+</html>

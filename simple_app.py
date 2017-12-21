@@ -16,9 +16,6 @@ from bokeh.embed import file_html
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
 
-
-
-
 app = Flask(__name__)
 
 
@@ -37,6 +34,7 @@ def chart():
                            js_resources=js_resources,
                            css_resources=css_resources)
     return encode_utf8(html)
+
 
 def create_line_chart():
     # create a new plot with default tools, using figure
