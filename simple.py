@@ -12,6 +12,8 @@ in this directory, and navigate to:
 '''
 from __future__ import print_function
 
+import os
+
 from flask import Flask, render_template, redirect, url_for, request
 
 
@@ -79,4 +81,7 @@ def login():
 
 if __name__ == "__main__":
     print(__doc__)
-    app.run()
+    try:
+        app.run(host=os.environ['PORT'])
+    except:
+        app.run()

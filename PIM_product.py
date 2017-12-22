@@ -189,7 +189,7 @@ def main_chart(product):
 
 
 if __name__ == '__main__':
-    p = main_chart()
+    p = main_chart('Anaesthetic')
     show(p)
 
 # https://stackoverflow.com/questions/39403529/how-to-show-a-pandas-dataframe-as-a-flask-boostrap-table
