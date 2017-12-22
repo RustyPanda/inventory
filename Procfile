@@ -1,2 +1,1 @@
-web: wla
-# web: simple.py
+web: simple.py
