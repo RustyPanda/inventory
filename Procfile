@@ -1,1 +1,1 @@
-web: simple.py
+web: python simple.py
