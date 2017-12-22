@@ -67,19 +67,18 @@
 
     <div class="row">
 
-        <div class="col-4">
+        <div class="col-3">
 
             <div class="row">
 
                 <div class="col offset-md-1">
-                    <form name="color" action="" method="POST">
+                    <form name="product" action="" method="POST">
                         <div class="form-group">
-                            <label for="color_dropdown">Product</label>
-                            <select class="form-control" id="color_dropdown" name="color">
-                                <option name='color' value="Red">Red</option>
-                                <option name="color" value="Green">Green</option>
-                                <option name='color' value="Blue">Blue</option>
-                                <option name='color' value="Black">Black</option>
+                            <label for="product_dropdown">Product</label>
+                            <select class="form-control" id="product_dropdown" name="product">
+                                {% for product in products %}
+                                    <option name='product' value="{{ product }} ">{{ product }}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
@@ -113,7 +112,7 @@
 
         </div>
 
-        <div class="col">
+        <div class="col-9 px-4">
 
             {{ plot_div|indent(4)|safe }}
 

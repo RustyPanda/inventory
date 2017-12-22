@@ -19,15 +19,10 @@ from bokeh.embed import components
 from bokeh.plotting import figure
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
+from PIM_product import main_chart
 
 app = Flask(__name__)
 
-colors = {
-    'Black': '#000000',
-    'Red':   '#FF0000',
-    'Green': '#00FF00',
-    'Blue':  '#0000FF',
-}
 
 def getitem(obj, item, default):
     if item not in obj:
@@ -42,26 +37,19 @@ def tracker():
 
     """
 
+    possible_products = ['Anaesthetic', 'Antivirals', 'Surgical Needles', 'Casts']
+
     # Grab the inputs arguments from the URL
-    args = request.args
-    m = request.method
     form = request.form
-
-    print(request)
-    if request.method == 'POST':
-        print(args)
-        print(form)
-
-    # Get all the form arguments in the url with defaults
-    color = getitem(args, 'color', 'Black')
-
-    _from = int(getitem(args, '_from', 0))
-    to = int(getitem(args, 'to', 10))
-
-    # Create a polynomial line graph with those arguments
-    x = list(range(_from, to + 1))
-    fig = figure(title="Polynomial")
-    fig.line(x, [i ** 2 for i in x], color=colors[color], line_width=2)
+    print(form)
+    # d = args.to_dict()
+    # print(d)
+    product = getitem(form, 'product', 'Anaesthetic')
+    other_products = [item for item in possible_products if item not in [product]]
+    products = [product] + other_products
+    print(product)
+    print(other_products)
+    fig = main_chart(product)
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -73,9 +61,7 @@ def tracker():
         plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
-        color=color,
-        _from=_from,
-        to=to
+        products=products,
     )
     return encode_utf8(html)
 

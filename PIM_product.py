@@ -48,7 +48,7 @@ def generate_synthetic_data(t):
     return features, true_demand, measured_demand
 
 
-def visualise_product_display(measured_demand, features, t, present_timestep):
+def visualise_product_display(measured_demand, features, t, present_timestep, product):
 
     t_past = t[:present_timestep]
     t_future = t[present_timestep:]
@@ -144,10 +144,10 @@ def visualise_product_display(measured_demand, features, t, present_timestep):
     )
 
     # create a new plot (with a title) using figure
-    p = figure(plot_width=1000,
+    p = figure(plot_width=800,
                plot_height=600,
                tools=[hover, 'box_zoom', 'pan', 'reset', 'save'],
-               title="Demand Tracker",
+               title="Demand for {}".format(product),
                x_range=[0, weeks*2],
                y_range=[0, measured_demand.max() + 5])
 
@@ -179,13 +179,13 @@ def visualise_product_display(measured_demand, features, t, present_timestep):
     return p
 
 
-def main_chart():
+def main_chart(product):
     t = np.arange(0, weeks).astype(int) * 2 # t in day units
     features, true_demand, measured_demand = generate_synthetic_data(t)
 
     present_timestep = int(3. * len(t) / 4.)
 
-    p = visualise_product_display(measured_demand, features, t, present_timestep)
+    p = visualise_product_display(measured_demand, features, t, present_timestep, product)
 
     return p
 
