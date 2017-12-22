@@ -64,7 +64,7 @@ def generate_synthetic_data_random_walks(t):
 
     # true_demand is true demand, from combining underlying known demand trends
     true_demand = feat1 + feat2 + feat3
-    true_demand = true_demand + np.abs(true_demand.min()) # always positive
+    true_demand = true_demand + np.abs(true_demand.min()) + 0.5 # always positive
     true_demand = true_demand / true_demand.mean()
     # measured_demand (capital) is measured demand, subject to high noise
     measured_demand = true_demand + np.random.normal(0, 0.4, np.shape(true_demand)) * 0.8
