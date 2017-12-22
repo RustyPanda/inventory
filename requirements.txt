@@ -3,5 +3,4 @@ Flask
 Jinja2
 numpy
 sklearn
-matplotlib
 scipy

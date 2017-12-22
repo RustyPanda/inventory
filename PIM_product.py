@@ -1,7 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from sklearn import linear_model
-plt.style.use('fivethirtyeight')
 
 from bokeh.io import output_notebook, show
 from bokeh.plotting import figure
