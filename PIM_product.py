@@ -67,7 +67,7 @@ def generate_synthetic_data_random_walks(t):
     true_demand = true_demand + np.abs(true_demand.min()) # always positive
     true_demand = true_demand / true_demand.mean()
     # measured_demand (capital) is measured demand, subject to high noise
-    measured_demand = true_demand + np.random.normal(0, 0.4, np.shape(true_demand)) * 0.6
+    measured_demand = true_demand + np.random.normal(0, 0.4, np.shape(true_demand)) * 0.8
     measured_demand = measured_demand * 100.
     measured_demand = measured_demand.astype(int)
 
@@ -175,28 +175,33 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
     p = figure(plot_width=800,
                plot_height=600,
                tools=[hover, 'box_zoom', 'pan', 'reset', 'save'],
-               title="Deliveries for {}".format(product),
+               title="Deliveries of {} for {}".format(product, hospital),
                x_range=[0, weeks*2],
                y_range=[0, measured_demand.max() + 5])
 
-    measured = p.cross('t', 'measured_demand_known', size=20, source=source)
-    estimate = p.line('t', 'mean', line_color='orange', line_width=3, source=source)
+    measured = p.cross('t', 'measured_demand_known', fill_color='#41B6E6', size=20, source=source)
+    estimate = p.line('t', 'mean', line_color='#005EB8', line_width=3, source=source)
     mean_model = p.line('t', 'mean_past', line_color='grey', line_dash='dashed', line_width=3, source=source)
 
-    uncertainty = p.patch('patches_t', 'patches', alpha=0.2, line_width=2, source=source)
+    uncertainty = p.patch('patches_t', 'patches', color='#41B6E6', alpha=0.2, line_width=2, source=source)
 
     p.toolbar.logo = None
 
-    p.yaxis.axis_label = "Products Required"
+    p.yaxis.axis_label = "Deliveries"
     p.xaxis.axis_label = "Week"
 
     # styling
-    p.title.text_font_size = '24pt'
+    p.title.text_font_size = '22px'
+    # p.title.text_font = 'sans-serif'
     p.background_fill_color = 'whitesmoke'
     p.background_fill_alpha = 0.5
     p.axis.axis_line_width = 3
-    p.axis.axis_label_text_font_size = '16pt'
-    p.axis.major_label_text_font_size = '16pt'
+    p.axis.axis_label_text_font_size = '18px'
+    p.axis.axis_label_text_font_style = 'normal'
+    p.axis.axis_label_text_font = 'sans-serif'
+    p.axis.axis_label_text_font_size = '18px'
+    p.axis.major_label_text_font_size = '18px'
+    p.axis.major_label_text_font = 'sans-serif'
 
     legend = Legend(items=[
         ("Deliveries", [measured]),
@@ -207,7 +212,8 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
 
     p.add_layout(legend, 'below')
     p.legend.orientation = "horizontal"
-    p.legend.label_text_font_size = '16pt'
+    p.legend.label_text_font = 'sans-serif'
+    p.legend.label_text_font_size = '18px'
     p.legend.spacing = 10
     p.legend.click_policy = "hide"
 

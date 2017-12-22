@@ -24,13 +24,13 @@ def tracker():
 
     """
 
-    possible_products = ['Anaesthetic', 'Antivirals', 'Surgical Needles']
+    possible_products = ['Syringes', 'Cannulas', 'Needles', 'Catheters']
     possible_hospitals = ['Western General', 'Royal Edinburgh Hospital']
 
     # Grab the inputs arguments from the URL
     form = request.form
 
-    product = getitem(form, 'product', 'Anaesthetic').rstrip(' ') # mysterious right space appears
+    product = getitem(form, 'product', 'Syringes').rstrip(' ') # mysterious right space appears
     other_products = [item for item in possible_products if item != product]
     products = [product] + other_products
 
