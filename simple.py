@@ -80,8 +80,5 @@ def login():
 
 
 if __name__ == "__main__":
-    print(__doc__)
-    try:
-        app.run(host=os.environ['PORT'])
-    except:
-        app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
