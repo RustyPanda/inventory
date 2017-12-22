@@ -1,10 +1,10 @@
 import numpy as np
 from sklearn import linear_model
 
-from bokeh.io import output_notebook, show
+from bokeh.io import show
 from bokeh.plotting import figure
-from bokeh.models import HoverTool, Range1d
-from bokeh.models import TapTool, CustomJS, ColumnDataSource
+from bokeh.models import HoverTool, Legend
+from bokeh.models import ColumnDataSource
 
 from scipy.stats import bayes_mvs
 
@@ -22,18 +22,21 @@ def generate_synthetic_data(t):
     feat1_phi = -90
     feat1 = feat1_scale *( np.sin(feat1_w * t + feat1_phi)*np.sin(feat1_w * t + feat1_phi) )
 
-    feat2_base = 0.5
-    feat2_factor = 0.2
-    feat2_phi = -90
-    feat2_w = 0.2
-    feat2_scale = 0.4
-    feat2 = feat2_scale * ( feat2_base + feat2_factor*np.cos(feat2_w * t + feat2_phi) )
+    # feat2_base = 0.5
+    # feat2_factor = 0.2
+    # feat2_phi = -90
+    # feat2_w = 0.2
+    # feat2_scale = 0.4
+    # feat2 = feat2_scale * ( feat2_base + feat2_factor*np.cos(feat2_w * t + feat2_phi) )
+    steps = 2 * np.random.randint(0, 2, (3, len(t))) - 1
+    positions = np.cumsum(steps, axis=1)
+    feat2 = positions[1, :] / 5.
 
     feat3 = np.arange(0, weeks, dtype=float) **1.5 * 0.001
 
     # true_demand is true demand, from combining underlying known demand trends
     true_demand = feat1 + feat2 + feat3
-    true_demand = true_demand + true_demand.min() # always positive
+    true_demand = true_demand + np.abs(true_demand.min() + 0.2) # always positive
     true_demand = true_demand / true_demand.mean()
     # measured_demand (capital) is measured demand, subject to high noise
     measured_demand = true_demand + np.random.normal(0,0.4,np.shape(true_demand)) * 0.6
@@ -46,7 +49,37 @@ def generate_synthetic_data(t):
     return features, true_demand, measured_demand
 
 
-def visualise_product_display(measured_demand, features, t, present_timestep, product):
+def generate_synthetic_data_random_walks(t):
+
+    # define feature sets
+    # each feature represents an underlying known demand driver e.g. operations, admits, season
+    # mathematically, this is the known independent (but potentially correlated) variables in the regression
+
+    # Steps can be -1 or 1 (note that randint excludes the upper limit)
+    steps = 2 * np.random.randint(0, 2, (3, len(t))) - 1
+    positions = np.cumsum(steps, axis=1)
+    feat1 = positions[0, :]
+    feat2 = positions[1, :]
+    feat3 = positions[2, :]
+
+    # true_demand is true demand, from combining underlying known demand trends
+    true_demand = feat1 + feat2 + feat3
+    true_demand = true_demand + np.abs(true_demand.min()) # always positive
+    true_demand = true_demand / true_demand.mean()
+    # measured_demand (capital) is measured demand, subject to high noise
+    measured_demand = true_demand + np.random.normal(0, 0.4, np.shape(true_demand)) * 0.6
+    measured_demand = measured_demand * 100.
+    measured_demand = measured_demand.astype(int)
+
+    # Model will estimate the true demand true_demand from the known demand drivers feat1, feat2, feat3, by day.
+    features = np.stack((feat1, feat2, feat3), axis=1)
+
+    print(true_demand.min(), true_demand.mean())
+
+    return features, true_demand, measured_demand
+
+
+def visualise_product_display(measured_demand, features, t, present_timestep, product, hospital):
 
     t_past = t[:present_timestep]
     t_future = t[present_timestep:]
@@ -92,9 +125,6 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
         mean_past[time_n] = single_result[0]
     mean_past = np.concatenate((mean_past, np.array([mean_future[0]])))
 
-        # lower_future[time_n] = single_result[1][0]
-        # upper_future[time_n] = single_result[1][1]
-
     # TODO wrap into neat function, then make a few different confidence levels for pro-effect
     lower_future = mean_future - mean_error
     upper_future = mean_future + mean_error
@@ -131,8 +161,8 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
 
     hover = HoverTool(
         tooltips=[
-            ('time', '@t'),
-            ("measured demand", "@measured_demand_known"),
+            ('Week', '@t'),
+            ("Products Delivered", "@measured_demand_known"),
             # ("predicted demand", "@mean"),
             # ("max prediction", "@upper"),
             # ("min prediction", "@lower"),
@@ -145,17 +175,15 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
     p = figure(plot_width=800,
                plot_height=600,
                tools=[hover, 'box_zoom', 'pan', 'reset', 'save'],
-               title="Demand for {}".format(product),
+               title="Deliveries for {}".format(product),
                x_range=[0, weeks*2],
                y_range=[0, measured_demand.max() + 5])
 
-    p.cross('t', 'measured_demand_known', size=20, source=source)
-    p.line('t', 'mean', legend='PIM estimate', line_color='orange', line_width=3, source=source)
-    # p.line('t', 'lower', legend='PIM lower', line_color='green', line_width=1, source=source)
-    # p.line('t', 'upper', legend='PIM upper', line_color='green', line_width=1, source=source)
-    p.line('t', 'mean_past', legend='PIM model', line_color='grey', line_dash='dashed', line_width=3, source=source)
+    measured = p.cross('t', 'measured_demand_known', size=20, source=source)
+    estimate = p.line('t', 'mean', line_color='orange', line_width=3, source=source)
+    mean_model = p.line('t', 'mean_past', line_color='grey', line_dash='dashed', line_width=3, source=source)
 
-    p.patch('patches_t', 'patches', legend='PIM uncertainty', alpha=0.2, line_width=2, source=source)
+    uncertainty = p.patch('patches_t', 'patches', alpha=0.2, line_width=2, source=source)
 
     p.toolbar.logo = None
 
@@ -166,30 +194,50 @@ def visualise_product_display(measured_demand, features, t, present_timestep, pr
     p.title.text_font_size = '24pt'
     p.background_fill_color = 'whitesmoke'
     p.background_fill_alpha = 0.5
-    # p.border_fill_color = "whitesmoke"
     p.axis.axis_line_width = 3
     p.axis.axis_label_text_font_size = '16pt'
-    p.legend.label_text_font_size = '16pt'
     p.axis.major_label_text_font_size = '16pt'
 
-    p.legend.location = "bottom_right"
+    legend = Legend(items=[
+        ("Deliveries", [measured]),
+        ("PIM estimate", [estimate]),
+        ("PIM model", [mean_model]),
+        ("PIM uncertainty", [uncertainty]),
+    ], location=(30, 10))
 
-    return p
+    p.add_layout(legend, 'below')
+    p.legend.orientation = "horizontal"
+    p.legend.label_text_font_size = '16pt'
+    p.legend.spacing = 10
+    p.legend.click_policy = "hide"
+
+    future_orders = []
+    cost_per_unit = np.random.rand() * 40
+    for n in range(len(t_future)):
+        future_orders.append({
+            'week': '{}'.format(t_future[n]),
+            'hospital': hospital,
+            'product': product,
+            'mean_future': '{}'.format(int(mean_future[n])),
+            'cost': '£{:7.2f}'.format(mean_future[n] * cost_per_unit)
+        })
+
+    return p, future_orders[:10]
 
 
-def main_chart(product):
+def main_chart(product, hospital):
     t = np.arange(0, weeks).astype(int) * 2 # t in day units
-    features, true_demand, measured_demand = generate_synthetic_data(t)
 
+    features, true_demand, measured_demand = generate_synthetic_data_random_walks(t)
     present_timestep = int(3. * len(t) / 4.)
 
-    p = visualise_product_display(measured_demand, features, t, present_timestep, product)
+    p = visualise_product_display(measured_demand, features, t, present_timestep, product, hospital)
 
     return p
 
 
 if __name__ == '__main__':
-    p = main_chart('Anaesthetic')
+    p = main_chart('Anaesthetic', 'Western General')
     show(p)
 
 # https://stackoverflow.com/questions/39403529/how-to-show-a-pandas-dataframe-as-a-flask-boostrap-table

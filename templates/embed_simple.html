@@ -8,7 +8,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
-    <title>Embed Demo</title>
+    <!--Tab text-->
+    <title>Predictive Inventory</title>
 
     {{ js_resources|indent(4)|safe }}
 
@@ -41,7 +42,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="">Home </a>
+                    <a class="nav-link" href="/">Home </a>
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="/tracker">Tracker <span class="sr-only">(current)</span></a>
@@ -72,17 +73,25 @@
             <div class="row">
 
                 <div class="col offset-md-1">
-                    <form name="product" action="" method="POST">
+                    <form name="form" action="" method="POST">
+                        <div class="form-group">
+                            <label for="hospital_dropdown">Hospital</label>
+                            <select class="form-control" id="hospital_dropdown" name="hospital">
+                                {% for hospital in hospitals %}
+                                    <option name='hospital' value="{{hospital}} ">{{hospital}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label for="product_dropdown">Product</label>
                             <select class="form-control" id="product_dropdown" name="product">
                                 {% for product in products %}
-                                    <option name='product' value="{{ product }} ">{{ product }}</option>
+                                    <option name='product' value="{{product}} ">{{product}}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
-                        <input class="btn btn-primary" type="submit" value="Login">
+                        <input class="btn btn-primary" type="submit" value="Show">
 
                     </form>
 
@@ -127,6 +136,7 @@
           <div class="p-2"></div>
           <div class="p-2"></div>
           <div class="p-2"></div>
+          <div class="p-2"></div>
         </div>
 
     </div>
@@ -136,41 +146,28 @@
             <table class="table table-hover ">
                 <thead class="thead-light">
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First Name</th>
-                    <th scope="col">Last Name</th>
-                    <th scope="col">Username</th>
+                    <th scope="col">Week</th>
+                    <th scope="col">Hospital</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Units</th>
+                    <th scope="col">Total Cost</th>
                 </tr>
                 </thead>
                 <tbody>
+                {% for order in future_orders %}
                 <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
+                    <th scope='row'>{{order['week']}}</th>
+                    <td>{{order['hospital']}}</td>
+                    <td>{{order['product']}}</td>
+                    <td>{{order['mean_future']}}</td>
+                    <td>{{order['cost']}}</td>
                 </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Jacob</td>
-                    <td>Thornton</td>
-                    <td>@fat</td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Larry</td>
-                    <td>the Bird</td>
-                    <td>@twitter</td>
-                </tr>
+                {% endfor %}
                 </tbody>
             </table>
 
         </div>
     </div>
-
-    <!--button, two, columns-->
-    <!--collapse (to hide/show table)-->
-    <!--if time allows - add a progress bar that completes and is replaced by the plot-->
-
 
 </div>
 

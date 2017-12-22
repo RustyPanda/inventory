@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>Flask Intro - login page</title>
+    <title>Predictive Inventory</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
@@ -16,7 +16,6 @@
 
     <div class="container">
 
-
         <!-- Image and text -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="">
@@ -29,10 +28,11 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item active">
-                        <a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/">Home<span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/tracker">Tracker</a>
+                        <!--actually directs you back to root, to force a login (can still connect with url)-->
+                        <a class="nav-link" href="/">Tracker</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link disabled" href="/alerts">Alerts</a>

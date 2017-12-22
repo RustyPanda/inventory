@@ -1,22 +1,8 @@
-'''This example demonstrates embedding a standalone Bokeh document
-into a simple Flask application, with a basic HTML web form.
-
-To view the example, run:
-
-    python simple.py
-
-in this directory, and navigate to:
-
-    http://localhost:5000
-
-'''
 from __future__ import print_function
 
 import os
 
 from flask import Flask, render_template, redirect, url_for, request
-
-
 from bokeh.embed import components
 from bokeh.resources import INLINE
 from bokeh.util.string import encode_utf8
@@ -38,19 +24,29 @@ def tracker():
 
     """
 
-    possible_products = ['Anaesthetic', 'Antivirals', 'Surgical Needles', 'Casts']
+    possible_products = ['Anaesthetic', 'Antivirals', 'Surgical Needles']
+    possible_hospitals = ['Western General', 'Royal Edinburgh Hospital']
 
     # Grab the inputs arguments from the URL
     form = request.form
-    print(form)
-    # d = args.to_dict()
-    # print(d)
-    product = getitem(form, 'product', 'Anaesthetic')
-    other_products = [item for item in possible_products if item not in [product]]
+
+    product = getitem(form, 'product', 'Anaesthetic').rstrip(' ') # mysterious right space appears
+    other_products = [item for item in possible_products if item != product]
     products = [product] + other_products
-    print(product)
-    print(other_products)
-    fig = main_chart(product)
+
+    hospital = getitem(form, 'hospital', 'Western General').rstrip(' ') # mysterious right space appears
+    other_hospitals = [item for item in possible_hospitals if item != hospital]
+    hospitals = [hospital] + other_hospitals
+
+    fig, future_orders = main_chart(product, hospital)
+
+    print(future_orders)
+    for order in future_orders:
+        print(order['week'])
+        print(order['hospital'])
+        print(order['product'])
+        print(order['mean_future'])
+        print(order['cost'])
 
     js_resources = INLINE.render_js()
     css_resources = INLINE.render_css()
@@ -62,7 +58,11 @@ def tracker():
         plot_div=div,
         js_resources=js_resources,
         css_resources=css_resources,
+        hospitals=hospitals,
         products=products,
+        future_orders=future_orders,
+        selected_hospital=hospital,
+        selected_product=product
     )
     return encode_utf8(html)
 
